@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArriendaTuFinca</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>ArriendaTuFinca</h1>
+
+    <!-- Formulario para agregar propiedades -->
+    <form id="agregarPropiedadForm">
+      <h2>Agregar Propiedad</h2>
+      <div>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" required>
+      </div>
+      <div>
+        <label for="ubicacion">Ubicación:</label>
+        <input type="text" id="ubicacion" required>
+      </div>
+      <div>
+        <label for="precio">Precio:</label>
+        <input type="text" id="precio" required>
+      </div>
+      <button type="submit">Agregar</button>
+    </form>
+
+    <!-- Formulario para editar propiedades (oculto inicialmente) -->
+    <form id="editarPropiedadForm" style="display: none;">
+      <h2>Editar Propiedad</h2>
+      <input type="hidden" id="editarId">
+      <div>
+        <label for="editarNombre">Nombre:</label>
+        <input type="text" id="editarNombre" required>
+      </div>
+      <div>
+        <label for="editarUbicacion">Ubicación:</label>
+        <input type="text" id="editarUbicacion" required>
+      </div>
+      <div>
+        <label for="editarPrecio">Precio:</label>
+        <input type="text" id="editarPrecio" required>
+      </div>
+      <button type="submit">Guardar Cambios</button>
+      <button type="button" id="cancelarEdicion">Cancelar</button>
+    </form>
+
+    <!-- Lista de propiedades -->
+    <h2>Lista de Propiedades</h2>
+    <ul id="propiedadList"></ul>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

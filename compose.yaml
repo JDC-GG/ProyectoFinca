@@ -1,9 +1,37 @@
+
 services:
-  postgres:
-    image: 'postgres:latest'
+  db:
+    image: postgres:13
+    container_name: postgres_db
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234  # Contraseña de PostgreSQL
+      POSTGRES_DB: arrendatufinca  # Nombre de la base de datos
     ports:
-      - '5432'
+      - "5432:5432"  # Cambia a 5432:5432 para evitar confusiones
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persistencia de datos
+    networks:
+      - app-network
+
+  app:
+    build: .  # Construye la imagen desde el Dockerfile
+    container_name: app_finca
+    ports:
+      - "8081:8081"  # Expone el puerto 8081 de la aplicación
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/arrendatufinca  # Conexión a la base de datos
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update  # Configuración de Hibernate
+    depends_on:
+      - db  # Asegura que la base de datos se inicie primero
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:  # Volumen para persistir datos de PostgreSQL
+
+networks:
+  app-network:
+    driver: bridge  # Red para conectar los contenedores
