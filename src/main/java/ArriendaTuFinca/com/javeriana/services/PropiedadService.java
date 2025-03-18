@@ -1,15 +1,15 @@
 package ArriendaTuFinca.com.javeriana.services;
 
-import ArriendaTuFinca.com.javeriana.dtos.PropiedadDTO;
-import ArriendaTuFinca.com.javeriana.entities.Propiedad;
-import ArriendaTuFinca.com.javeriana.repositories.PropiedadRepository;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import ArriendaTuFinca.com.javeriana.dtos.PropiedadDTO;
+import ArriendaTuFinca.com.javeriana.entities.Propiedad;
+import ArriendaTuFinca.com.javeriana.repositories.PropiedadRepository;
 @Service
 public class PropiedadService {
     
