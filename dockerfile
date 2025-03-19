@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/javeriana-0.0.1-SNAPSHOT.jar app.jar
 
 # Puerto expuesto
-EXPOSE 8081
+EXPOSE 8081 
 
 # Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "app.jar"] *
+ENTRYPOINT ["java", "-jar", "app.jar"] 

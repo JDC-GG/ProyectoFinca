@@ -1,19 +1,24 @@
 package ArriendaTuFinca.com.javeriana.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "propiedades")
+@Table(name = "propiedad")
 public class Propiedad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String nombre; // Campo "nombre"
+    private String nombre;
 
     @Column(nullable = false)
-    private String ubicacion; // Campo "ubicacion"
+    private String ubicacion;
 
     @Column(nullable = false)
     private double precio;
