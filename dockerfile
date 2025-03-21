@@ -7,8 +7,5 @@ WORKDIR /app
 # Copiar el archivo JAR de la aplicación
 COPY target/javeriana-0.0.1-SNAPSHOT.jar app.jar
 
-# 
-RUN chmod +x mvnw
-
 # Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "javeriana-0.0.1-SNAPSHOT.jar"] 
+ENTRYPOINT ["java", "-jar", "app.jar"] 
