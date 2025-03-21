@@ -9,7 +9,7 @@ COPY . /app
 WORKDIR /app
 
 # Construir el JAR sin ejecutar pruebas
-WORKDIR /app/arriendatufinca
+WORKDIR /app
 RUN ./mvnw clean install -DskipTests
 
 # Ejecutar la aplicación cuando se inicie el contenedor
