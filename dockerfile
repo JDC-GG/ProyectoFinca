@@ -1,11 +1,16 @@
 # Usar una imagen base de Java
-FROM openjdk:17-jdk-alpine
+#Usar la imagen base de OpenJDK 17
+FROM openjdk:17
 
-# Directorio de trabajo dentro del contenedor
+# Copiar el código fuente de la aplicación al contenedor
+COPY . /app
+
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar el archivo JAR de la aplicación
-COPY target/javeriana-0.0.1-SNAPSHOT.jar app.jar
+# Construir el JAR sin ejecutar pruebas
+WORKDIR /app/arriendatufinca
+RUN ./mvnw clean install -DskipTests
 
-# Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "app.jar"] 
+# Ejecutar la aplicación cuando se inicie el contenedor
+CMD ["java", "-jar", "target/javeriana-0.0.1-SNAPSHOT.jar"]
