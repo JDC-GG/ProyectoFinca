@@ -1,5 +1,4 @@
-# Usar una imagen base de Java
-#Usar la imagen base de OpenJDK 17
+# Usar la imagen base de OpenJDK 17
 FROM openjdk:17
 
 # Copiar el código fuente de la aplicación al contenedor

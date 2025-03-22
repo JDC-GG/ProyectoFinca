@@ -1,13 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: javeriana-service
+  name: test
+  namespace: thymeleaf
 spec:
   selector:
-    app: javeriana-app
+    app: test
   ports:
     - protocol: TCP
-      port: 8081  # Puerto externo
-      targetPort: 8081  # Puerto en el contenedor
-  type: LoadBalancer  # Usa NodePort si estás en Minikube
-
+      port: 8080
+      targetPort: 8081
