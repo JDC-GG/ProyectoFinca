@@ -20,7 +20,7 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @Transactional
-public class SolicitudArriendoServiceTest {
+class SolicitudArriendoServiceTest {
 
     @Autowired
     private SolicitudArriendoService solicitudArriendoService;
@@ -66,8 +66,10 @@ public class SolicitudArriendoServiceTest {
         assertTrue(solicitudesDespues.isEmpty(), "La lista debe estar vacía después de eliminar");
 
         // 6. Intentar obtener solicitud eliminada
+        Long idSolicitudEliminada = solicitudCreada.getId(); // Obtenemos el ID fuera del try
         try {
-            solicitudArriendoService.obtenerSolicitudPorId(solicitudCreada.getId());
+            // Única operación que puede lanzar excepción
+            solicitudArriendoService.obtenerSolicitudPorId(idSolicitudEliminada);
             fail("Debería haber lanzado una excepción");
         } catch (RuntimeException ex) {
             assertEquals("Solicitud no encontrada", ex.getMessage());

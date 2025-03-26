@@ -15,7 +15,7 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @Transactional
-public class UsuarioServiceTest {
+class UsuarioServiceTest {
 
     @Autowired
     private UsuarioService usuarioService;
@@ -39,10 +39,13 @@ public class UsuarioServiceTest {
         // 4. Verificar lista vacía
         List<UsuarioDTO> usuariosDespues = usuarioService.listarTodosLosUsuarios();
         assertTrue(usuariosDespues.isEmpty(), "La lista debe estar vacía después de eliminar");
-
+        
         // 5. Intentar obtener usuario eliminado
+        UsuarioDTO usuarioAEliminar = usuarioCreado; // Mejor legibilidad
+        Long idUsuarioAEliminar = usuarioAEliminar.getId();
         try {
-            usuarioService.obtenerUsuarioPorId(usuarioCreado.getId());
+        // Única operación que puede lanzar RuntimeException
+            usuarioService.obtenerUsuarioPorId(idUsuarioAEliminar);
             fail("Debería haber lanzado una excepción");
         } catch (RuntimeException ex) {
             assertEquals("Usuario no encontrado", ex.getMessage());

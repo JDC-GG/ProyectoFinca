@@ -5,7 +5,6 @@ import ArriendaTuFinca.com.javeriana.entities.Usuario;
 import ArriendaTuFinca.com.javeriana.repositories.UsuarioRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,7 @@ public class UsuarioService {
     public List<UsuarioDTO> listarTodosLosUsuarios() {
         return usuarioRepository.findAll().stream()
             .map(this::convertirAUsuarioDTO)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private UsuarioDTO convertirAUsuarioDTO(Usuario usuario) {

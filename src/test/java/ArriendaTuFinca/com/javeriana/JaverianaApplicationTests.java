@@ -9,6 +9,8 @@ class JaverianaApplicationTests {
 
 	@Test
 	void contextLoads() {
-	}
+    // Este test solo verifica que el contexto de Spring se carga correctamente
+    // No necesita implementación adicional
+}
 
 }

@@ -15,7 +15,7 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @Transactional
-public class PropiedadServiceTest {
+class PropiedadServiceTest {
 
     @Autowired
     private PropiedadService propiedadService;
