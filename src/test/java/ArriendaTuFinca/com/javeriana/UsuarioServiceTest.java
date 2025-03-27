@@ -51,4 +51,41 @@ class UsuarioServiceTest {
             assertEquals("Usuario no encontrado", ex.getMessage());
         }
     }
+
+    @Test
+void crearUsuario_DebeAsignarRolCorrectamente() {
+    // 1. Crear usuario
+    UsuarioDTO usuarioDTO = new UsuarioDTO();
+    usuarioDTO.setNombre("Carlos López");
+    usuarioDTO.setEmail("carlos@gmail.com");
+    usuarioDTO.setRol("ARRENDADOR");
+
+    // 2. Guardar usuario
+    UsuarioDTO usuarioCreado = usuarioService.crearUsuario(usuarioDTO);
+
+    // 3. Verificar rol
+    assertEquals("ARRENDADOR", usuarioCreado.getRol());
+}
+
+    @Test
+    void actualizarUsuario_DebeCambiarEmailCorrectamente() {
+        // 1. Crear usuario
+        UsuarioDTO usuarioCreado = crearUsuarioDePrueba();
+
+        // 2. Actualizar email
+        usuarioCreado.setEmail("David@gmail.com");
+        UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(usuarioCreado.getId(), usuarioCreado);
+
+        // 3. Verificar
+        assertEquals("David@gmail.com", usuarioActualizado.getEmail());
+    }
+
+    // Método auxiliar para crear usuario de prueba
+    private UsuarioDTO crearUsuarioDePrueba() {
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setNombre("Usuario Prueba");
+        usuarioDTO.setEmail("Carloss@gmail.com");
+        usuarioDTO.setRol("ARRENDATARIO");
+        return usuarioService.crearUsuario(usuarioDTO);
+    }
 }

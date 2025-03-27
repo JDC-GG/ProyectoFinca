@@ -52,4 +52,36 @@ class PropiedadServiceTest {
             assertEquals("Propiedad no encontrada", ex.getMessage()); // Mensaje exacto
         }
     }
+    @Test
+    void crearPropiedad_DebeRetornarPropiedadConDatosCorrectos() {
+        // 1. Crear propiedad
+        PropiedadDTO propiedadDTO = new PropiedadDTO();
+        propiedadDTO.setNombre("Finca Cafetera");
+        propiedadDTO.setUbicacion("Armenia");
+        propiedadDTO.setPrecio(400000.0);
+
+        // 2. Guardar propiedad
+        PropiedadDTO propiedadCreada = propiedadService.crearPropiedad(propiedadDTO);
+
+        // 3. Verificar datos
+        assertEquals("Finca Cafetera", propiedadCreada.getNombre());
+        assertEquals("Armenia", propiedadCreada.getUbicacion());
+        assertEquals(400000.0, propiedadCreada.getPrecio());
+    }
+
+
+    @Test
+    void actualizarPropiedad_DebeModificarDatosCorrectamente() {
+        // 1. Crear propiedad
+        PropiedadDTO propiedadCreada = crearPropiedadDePrueba();
+
+        // 2. Actualizar datos
+        propiedadCreada.setNombre("Casa Actualizada");
+        propiedadCreada.setPrecio(600000.0);
+        PropiedadDTO propiedadActualizada = propiedadService.actualizarPropiedad(propiedadCreada.getId(), propiedadCreada);
+
+        // 3. Verificar cambios
+        assertEquals("Casa Actualizada", propiedadActualizada.getNombre());
+        assertEquals(600000.0, propiedadActualizada.getPrecio());
+    }
 }
