@@ -1,8 +1,14 @@
 package ArriendaTuFinca.com.javeriana.services;
 
+import ArriendaTuFinca.com.javeriana.dtos.PropiedadDTO;
 import ArriendaTuFinca.com.javeriana.dtos.SolicitudArriendoDTO;
+import ArriendaTuFinca.com.javeriana.dtos.UsuarioDTO;
+import ArriendaTuFinca.com.javeriana.entities.Propiedad;
 import ArriendaTuFinca.com.javeriana.entities.SolicitudArriendo;
+import ArriendaTuFinca.com.javeriana.entities.Usuario;
+import ArriendaTuFinca.com.javeriana.repositories.PropiedadRepository;
 import ArriendaTuFinca.com.javeriana.repositories.SolicitudArriendoRepository;
+import ArriendaTuFinca.com.javeriana.repositories.UsuarioRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,38 +16,65 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class SolicitudArriendoService {
 
     @Autowired
     private SolicitudArriendoRepository solicitudArriendoRepository;
+    
+    @Autowired
+    private PropiedadRepository propiedadRepository;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    public SolicitudArriendoDTO crearSolicitud(SolicitudArriendoDTO solicitudArriendoDTO) {
-        SolicitudArriendo solicitudArriendo = new SolicitudArriendo();
-        solicitudArriendo.setPropiedadId(solicitudArriendoDTO.getPropiedadId());
-        solicitudArriendo.setUsuarioId(solicitudArriendoDTO.getUsuarioId());
-        solicitudArriendo.setFechaSolicitud(solicitudArriendoDTO.getFechaSolicitud());
-        solicitudArriendo.setEstado(solicitudArriendoDTO.getEstado());
-        solicitudArriendo = solicitudArriendoRepository.save(solicitudArriendo);
-        return convertirASolicitudArriendoDTO(solicitudArriendo);
+    public SolicitudArriendoDTO crearSolicitud(SolicitudArriendoDTO solicitudDTO) {
+        // Buscar la propiedad y usuario relacionados
+        Propiedad propiedad = propiedadRepository.findById(solicitudDTO.getPropiedad().getId())
+            .orElseThrow(() -> new RuntimeException("Propiedad no encontrada"));
+        Usuario usuario = usuarioRepository.findById(solicitudDTO.getUsuario().getId())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        // Crear la entidad SolicitudArriendo
+        SolicitudArriendo solicitud = new SolicitudArriendo();
+        solicitud.setPropiedad(propiedad);
+        solicitud.setUsuario(usuario);
+        solicitud.setFechaSolicitud(solicitudDTO.getFechaSolicitud());
+        solicitud.setEstado(solicitudDTO.getEstado());
+        
+        // Guardar y retornar DTO
+        solicitud = solicitudArriendoRepository.save(solicitud);
+        return convertirASolicitudDTO(solicitud);
     }
 
     public SolicitudArriendoDTO obtenerSolicitudPorId(Long id) {
-        SolicitudArriendo solicitudArriendo = solicitudArriendoRepository.findById(id)
+        SolicitudArriendo solicitud = solicitudArriendoRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
-        return convertirASolicitudArriendoDTO(solicitudArriendo);
+        return convertirASolicitudDTO(solicitud);
     }
 
-    public SolicitudArriendoDTO actualizarSolicitud(Long id, SolicitudArriendoDTO solicitudArriendoDTO) {
-        SolicitudArriendo solicitudArriendo = solicitudArriendoRepository.findById(id)
+    public SolicitudArriendoDTO actualizarSolicitud(Long id, SolicitudArriendoDTO solicitudDTO) {
+        SolicitudArriendo solicitud = solicitudArriendoRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
-        solicitudArriendo.setPropiedadId(solicitudArriendoDTO.getPropiedadId());
-        solicitudArriendo.setUsuarioId(solicitudArriendoDTO.getUsuarioId());
-        solicitudArriendo.setFechaSolicitud(solicitudArriendoDTO.getFechaSolicitud());
-        solicitudArriendo.setEstado(solicitudArriendoDTO.getEstado());
-        solicitudArriendo = solicitudArriendoRepository.save(solicitudArriendo);
-        return convertirASolicitudArriendoDTO(solicitudArriendo);
+        
+        // Actualizar relaciones si es necesario
+        if (solicitudDTO.getPropiedad() != null && !solicitud.getPropiedad().getId().equals(solicitudDTO.getPropiedad().getId())) {
+            Propiedad propiedad = propiedadRepository.findById(solicitudDTO.getPropiedad().getId())
+                .orElseThrow(() -> new RuntimeException("Propiedad no encontrada"));
+            solicitud.setPropiedad(propiedad);
+        }
+        
+        if (solicitudDTO.getUsuario() != null && !solicitud.getUsuario().getId().equals(solicitudDTO.getUsuario().getId())) {
+            Usuario usuario = usuarioRepository.findById(solicitudDTO.getUsuario().getId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            solicitud.setUsuario(usuario);
+        }
+        
+        solicitud.setFechaSolicitud(solicitudDTO.getFechaSolicitud());
+        solicitud.setEstado(solicitudDTO.getEstado());
+        
+        solicitud = solicitudArriendoRepository.save(solicitud);
+        return convertirASolicitudDTO(solicitud);
     }
 
     public void eliminarSolicitud(Long id) {
@@ -50,17 +83,29 @@ public class SolicitudArriendoService {
 
     public List<SolicitudArriendoDTO> listarTodasLasSolicitudes() {
         return solicitudArriendoRepository.findAll().stream()
-            .map(this::convertirASolicitudArriendoDTO)
+            .map(this::convertirASolicitudDTO)
             .collect(Collectors.toList());
     }
 
-    private SolicitudArriendoDTO convertirASolicitudArriendoDTO(SolicitudArriendo solicitudArriendo) {
-        SolicitudArriendoDTO solicitudArriendoDTO = new SolicitudArriendoDTO();
-        solicitudArriendoDTO.setId(solicitudArriendo.getId());
-        solicitudArriendoDTO.setPropiedadId(solicitudArriendo.getPropiedadId());
-        solicitudArriendoDTO.setUsuarioId(solicitudArriendo.getUsuarioId());
-        solicitudArriendoDTO.setFechaSolicitud(solicitudArriendo.getFechaSolicitud());
-        solicitudArriendoDTO.setEstado(solicitudArriendo.getEstado());
-        return solicitudArriendoDTO;
+    private SolicitudArriendoDTO convertirASolicitudDTO(SolicitudArriendo solicitud) {
+        SolicitudArriendoDTO dto = new SolicitudArriendoDTO();
+        dto.setId(solicitud.getId());
+        
+        // Convertir Propiedad a DTO básico
+        PropiedadDTO propiedadDTO = new PropiedadDTO();
+        propiedadDTO.setId(solicitud.getPropiedad().getId());
+        propiedadDTO.setNombre(solicitud.getPropiedad().getNombre());
+        dto.setPropiedad(propiedadDTO);
+        
+        // Convertir Usuario a DTO básico
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setId(solicitud.getUsuario().getId());
+        usuarioDTO.setNombre(solicitud.getUsuario().getNombre());
+        dto.setUsuario(usuarioDTO);
+        
+        dto.setFechaSolicitud(solicitud.getFechaSolicitud());
+        dto.setEstado(solicitud.getEstado());
+        
+        return dto;
     }
 }

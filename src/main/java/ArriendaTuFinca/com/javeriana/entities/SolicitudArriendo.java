@@ -1,13 +1,7 @@
 package ArriendaTuFinca.com.javeriana.entities;
 
+import jakarta.persistence.*;
 import java.sql.Date;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "solicitud_arriendo")
@@ -16,11 +10,13 @@ public class SolicitudArriendo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long propiedadId;
+    @ManyToOne
+    @JoinColumn(name = "propiedad_id", nullable = false)
+    private Propiedad propiedad;
 
-    @Column(nullable = false)
-    private Long usuarioId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
     @Column(nullable = false)
     private Date fechaSolicitud;
@@ -29,43 +25,44 @@ public class SolicitudArriendo {
     private String estado;
 
     // Getters y Setters
-    public Long getId() {
-        return id;
+    public Long getId() { 
+        return id; 
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long id) { 
+        this.id = id; 
     }
 
-    public Long getPropiedadId() {
-        return propiedadId;
+    public Propiedad getPropiedad() { 
+        return propiedad; 
     }
 
-    public void setPropiedadId(Long propiedadId) {
-        this.propiedadId = propiedadId;
+    public void setPropiedad(Propiedad propiedad) { 
+        this.propiedad = propiedad; 
     }
 
-    public Long getUsuarioId() {
-        return usuarioId;
+    public Usuario getUsuario() { 
+        return usuario; 
     }
 
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setUsuario(Usuario usuario) { 
+        this.usuario = usuario; 
     }
 
-    public Date getFechaSolicitud() {
-        return fechaSolicitud;
+    public Date getFechaSolicitud() { 
+        return fechaSolicitud; 
     }
 
-    public void setFechaSolicitud(Date fechaSolicitud) {
-        this.fechaSolicitud = fechaSolicitud;
+    public void setFechaSolicitud(Date fechaSolicitud) { 
+        this.fechaSolicitud = fechaSolicitud; 
     }
 
-    public String getEstado() {
-        return estado;
+    public String getEstado() { 
+        return estado; 
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setEstado(String estado) { 
+        this.estado = estado; 
     }
+    
 }
