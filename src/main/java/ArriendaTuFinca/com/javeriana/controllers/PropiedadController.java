@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,8 @@ import ArriendaTuFinca.com.javeriana.dtos.PropiedadDTO;
 import ArriendaTuFinca.com.javeriana.services.PropiedadService;
 
 @RestController
-@RequestMapping("/propiedad")
+@RequestMapping("/api/propiedad")
+
 public class PropiedadController {
     @Autowired
     private PropiedadService propiedadService;
@@ -48,6 +50,7 @@ public class PropiedadController {
     }
 
     // Listar todas las propiedades
+    @CrossOrigin
     @GetMapping
     public ResponseEntity<List<PropiedadDTO>> listarPropiedades() {
         return ResponseEntity.ok(propiedadService.listarTodasLasPropiedades());
