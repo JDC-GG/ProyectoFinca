@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     try {
       // Enviar datos al backend
-      const response = await fetch('http://localhost:8081/propiedad', {
+      const response = await fetch('http://localhost:8081/api/propiedad', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       propiedadList.innerHTML = '<li>Cargando propiedades...</li>';
       
-      const response = await fetch('http://localhost:8081/propiedad');
+      const response = await fetch('http://localhost:8081/api/propiedad');
       
       if (!response.ok) {
         throw new Error('Error al obtener propiedades');
@@ -125,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('editarPrecio').value = propiedad.precio;
     
     // Mostrar formulario de edición y ocultar el de agregar
-    editarPropiedadForm.style.display = 'block';
-    agregarPropiedadForm.style.display = 'none';
+    document.getElementById('editarPropiedadForm').style.display = 'block';
+    document.getElementById('agregarPropiedadForm').style.display = 'none';
   }
 
   // Manejar envío del formulario de edición
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     try {
-      const response = await fetch(`http://localhost:8081/propiedad/${id}`, {
+      const response = await fetch(`http://localhost:8081/api/propiedad/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     try {
-      const response = await fetch(`http://localhost:8081/propiedad/${id}`, {
+      const response = await fetch(`http://localhost:8081/api/propiedad/${id}`, {
         method: 'DELETE'
       });
       
