@@ -1,15 +1,14 @@
-# Etapa de build
-FROM maven:3.8.5-openjdk-17-slim AS build
+# Usar la imagen base de OpenJDK 17
+FROM openjdk:17
 
+# Copiar el código fuente de la aplicación al contenedor
+COPY . /app
+
+# Establecer el directorio de trabajo
 WORKDIR /app
-COPY . .
 
-RUN mvn clean package -DskipTests
+# Construir el JAR sin ejecutar pruebas
+RUN ./mvnw clean install -DskipTests
 
-# Etapa final: solo copiamos el jar ya construido
-FROM openjdk:17-slim
-
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-
-CMD ["java", "-jar", "app.jar"]
+# Ejecutar la aplicación cuando se inicie el contenedor
+CMD ["java", "-jar", "target/javeriana-0.0.1-SNAPSHOT.jar"]
