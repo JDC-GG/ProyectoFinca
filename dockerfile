@@ -1,14 +1,15 @@
-# Usar una imagen base de Java
-FROM openjdk:17-jdk-alpine
+# Etapa de build
+FROM maven:3.8.5-openjdk-17-slim AS build
 
-# Directorio de trabajo dentro del contenedor
 WORKDIR /app
+COPY . .
 
-# Copiar el archivo JAR de la aplicación
-COPY target/javeriana-0.0.1-SNAPSHOT.jar app.jar
+RUN mvn clean package -DskipTests
 
-# Puerto expuesto
-EXPOSE 8081 
+# Etapa final: solo copiamos el jar ya construido
+FROM openjdk:17-slim
 
-# Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "app.jar"] 
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+
+CMD ["java", "-jar", "app.jar"]
