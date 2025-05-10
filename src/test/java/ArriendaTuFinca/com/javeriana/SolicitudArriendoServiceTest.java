@@ -215,7 +215,7 @@ class SolicitudArriendoServiceTest {
     private UsuarioDTO crearUsuarioEjemplo(String nombre, String email, String rol) {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setNombre(nombre);
-        usuarioDTO.setEmail(email);
+        usuarioDTO.setCorreo(email);
         usuarioDTO.setRol(rol);
         return usuarioService.crearUsuario(usuarioDTO);
     }

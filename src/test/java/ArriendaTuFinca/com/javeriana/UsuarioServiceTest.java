@@ -69,24 +69,24 @@ class UsuarioServiceTest {
         String nuevoEmail = "nuevo@gmail.com";
         
         // 2. EJECUCIÓN: Actualizar email
-        usuarioOriginal.setEmail(nuevoEmail);
+        usuarioOriginal.setCorreo(nuevoEmail);
         UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(
             usuarioOriginal.getId(), usuarioOriginal);
         
         // 3. VERIFICACIÓN: Comprobar cambio
-        assertEquals(nuevoEmail, usuarioActualizado.getEmail(),
+        assertEquals(nuevoEmail, usuarioActualizado.getCorreo(),
                    "El email no se actualizó correctamente");
         
         // Verificar persistencia del cambio
         UsuarioDTO usuarioObtenido = usuarioService.obtenerUsuarioPorId(usuarioOriginal.getId());
-        assertEquals(nuevoEmail, usuarioObtenido.getEmail());
+        assertEquals(nuevoEmail, usuarioObtenido.getCorreo());
     }
 
     // Método auxiliar mejorado
     private UsuarioDTO crearUsuarioDePrueba(String nombre, String email, String rol) {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setNombre(nombre);
-        usuarioDTO.setEmail(email);
+        usuarioDTO.setCorreo(email);
         usuarioDTO.setRol(rol);
         return usuarioService.crearUsuario(usuarioDTO);
     }

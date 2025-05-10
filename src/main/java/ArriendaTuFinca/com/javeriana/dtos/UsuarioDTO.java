@@ -1,52 +1,33 @@
 package ArriendaTuFinca.com.javeriana.dtos;
 
-import java.util.List;
-
 public class UsuarioDTO {
     private Long id;
     private String nombre;
-    private String email;
+    private String apellido;
+    private String telefono;
+    private String correo;
+    private String contrasena;
     private String rol;
-    private List<SolicitudArriendoDTO> solicitudes;
 
     // Getters y Setters
-    public Long getId() { 
-        return id; 
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) { 
-        this.id = id; 
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getNombre() { 
-        return nombre; 
-    }
+    public String getApellido() { return apellido; }
+    public void setApellido(String apellido) { this.apellido = apellido; }
 
-    public void setNombre(String nombre) { 
-        this.nombre = nombre; 
-    }
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 
-    public String getEmail() { 
-        return email; 
-    }
+    public String getCorreo() { return correo; }
+    public void setCorreo(String correo) { this.correo = correo; }
 
-    public void setEmail(String email) { 
-        this.email = email; 
-    }
+    public String getContrasena() { return contrasena; }
+    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
 
-    public String getRol() { 
-        return rol; 
-    }
-
-    public void setRol(String rol) { 
-        this.rol = rol; 
-    }
-
-    public List<SolicitudArriendoDTO> getSolicitudes() { 
-        return solicitudes; 
-    }
-
-    public void setSolicitudes(List<SolicitudArriendoDTO> solicitudes) { 
-        this.solicitudes = solicitudes; 
-    }
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
 }

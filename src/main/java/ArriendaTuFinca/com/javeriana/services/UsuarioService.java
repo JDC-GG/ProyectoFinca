@@ -18,8 +18,11 @@ public class UsuarioService {
     public UsuarioDTO crearUsuario(UsuarioDTO usuarioDTO) {
         Usuario usuario = new Usuario();
         usuario.setNombre(usuarioDTO.getNombre());
-        usuario.setEmail(usuarioDTO.getEmail());
-        usuario.setRol(usuarioDTO.getRol());
+        usuario.setApellido(usuarioDTO.getApellido());
+        usuario.setTelefono(usuarioDTO.getTelefono());
+        usuario.setCorreo(usuarioDTO.getCorreo());
+        usuario.setContrasena(usuarioDTO.getContrasena());
+        usuario.setRol(usuarioDTO.getRol() != null ? usuarioDTO.getRol() : "USUARIO");
         usuario = usuarioRepository.save(usuario);
         return convertirAUsuarioDTO(usuario);
     }
@@ -33,9 +36,14 @@ public class UsuarioService {
     public UsuarioDTO actualizarUsuario(Long id, UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         usuario.setNombre(usuarioDTO.getNombre());
-        usuario.setEmail(usuarioDTO.getEmail());
+        usuario.setApellido(usuarioDTO.getApellido());
+        usuario.setTelefono(usuarioDTO.getTelefono());
+        usuario.setCorreo(usuarioDTO.getCorreo());
+        usuario.setContrasena(usuarioDTO.getCorreo());
         usuario.setRol(usuarioDTO.getRol());
+
         usuario = usuarioRepository.save(usuario);
         return convertirAUsuarioDTO(usuario);
     }
@@ -54,7 +62,10 @@ public class UsuarioService {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setId(usuario.getId());
         usuarioDTO.setNombre(usuario.getNombre());
-        usuarioDTO.setEmail(usuario.getEmail());
+        usuarioDTO.setApellido(usuario.getApellido());
+        usuarioDTO.setTelefono(usuario.getTelefono());
+        usuarioDTO.setCorreo(usuario.getCorreo());
+        usuarioDTO.setContrasena(usuario.getContrasena());
         usuarioDTO.setRol(usuario.getRol());
         return usuarioDTO;
     }
