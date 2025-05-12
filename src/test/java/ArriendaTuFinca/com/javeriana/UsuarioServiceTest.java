@@ -1,93 +1,92 @@
 package ArriendaTuFinca.com.javeriana;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.dao.DataIntegrityViolationException;
+
 import ArriendaTuFinca.com.javeriana.dtos.UsuarioDTO;
 import ArriendaTuFinca.com.javeriana.services.UsuarioService;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
-@ActiveProfiles("test") // Usa configuración específica para tests
-@Transactional // Cada test se ejecuta en una transacción que se revierte al final
+@Transactional
 class UsuarioServiceTest {
 
     @Autowired
     private UsuarioService usuarioService;
 
-    @BeforeEach
-    void limpiarBaseDeDatos() {
-        // Elimina todos los usuarios antes de cada test
-        usuarioService.listarTodosLosUsuarios().forEach(usuario -> {
-            usuarioService.eliminarUsuario(usuario.getId());
+    private UsuarioDTO crearUsuarioValido() {
+        UsuarioDTO usuario = new UsuarioDTO();
+        usuario.setNombre("Test");
+        usuario.setApellido("Usuario");
+        usuario.setTelefono("1234567890");
+        usuario.setCorreo("test" + System.currentTimeMillis() + "@example.com");
+        usuario.setContrasena("password123");
+        usuario.setRol("ARRENDATARIO");
+        return usuario;
+    }
+
+    @Test
+    void crearUsuario_ConDatosValidos_RetornaUsuarioConId() {
+        UsuarioDTO usuario = crearUsuarioValido();
+        
+        UsuarioDTO resultado = usuarioService.crearUsuario(usuario);
+        
+        assertNotNull(resultado.getId());
+        assertEquals(usuario.getNombre(), resultado.getNombre());
+    }
+
+    @Test
+    void obtenerUsuarioPorId_ConIdExistente_RetornaUsuarioCorrecto() {
+        UsuarioDTO usuarioCreado = usuarioService.crearUsuario(crearUsuarioValido());
+        
+        UsuarioDTO usuarioObtenido = usuarioService.obtenerUsuarioPorId(usuarioCreado.getId());
+        
+        assertEquals(usuarioCreado.getId(), usuarioObtenido.getId());
+    }
+
+    @Test
+    void actualizarUsuario_ConNuevosDatos_ActualizaCorrectamente() {
+        UsuarioDTO usuarioOriginal = usuarioService.crearUsuario(crearUsuarioValido());
+        String nuevoNombre = "Nombre Actualizado";
+        
+        usuarioOriginal.setNombre(nuevoNombre);
+        UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(usuarioOriginal.getId(), usuarioOriginal);
+        
+        assertEquals(nuevoNombre, usuarioActualizado.getNombre());
+    }
+
+    @Test
+    void eliminarUsuario_ConIdExistente_ElUsuarioNoDebeExistir() {
+        UsuarioDTO usuario = usuarioService.crearUsuario(crearUsuarioValido());
+        
+        usuarioService.eliminarUsuario(usuario.getId());
+        
+        assertThrows(RuntimeException.class, () -> {
+            usuarioService.obtenerUsuarioPorId(usuario.getId());
         });
     }
 
     @Test
-    void eliminarUsuario_DebeEliminarCorrectamente() {
-        // 1. PREPARACIÓN: Crear usuario de prueba
-        UsuarioDTO usuarioCreado = crearUsuarioDePrueba("Juan Pérez", "juan@gmail.com", "ARRENDADOR");
+    void listarUsuarios_ConUsuariosExistentes_RetornaListaNoVacia() {
+        usuarioService.crearUsuario(crearUsuarioValido());
+        usuarioService.crearUsuario(crearUsuarioValido());
         
-        // 2. EJECUCIÓN: Eliminar el usuario
-        Long idUsuario = usuarioCreado.getId();
-        usuarioService.eliminarUsuario(idUsuario);
+        var usuarios = usuarioService.listarTodosLosUsuarios();
         
-        // 3. VERIFICACIÓN: Comprobar que ya no existe
-        assertThrows(RuntimeException.class, () -> {
-            usuarioService.obtenerUsuarioPorId(idUsuario);
-        }, "Debería lanzar excepción al buscar usuario eliminado");
-        
-        // Verificar que la lista está vacía
-        assertTrue(usuarioService.listarTodosLosUsuarios().isEmpty(), 
-                 "La lista de usuarios debería estar vacía después de eliminar");
+        assertFalse(usuarios.isEmpty());
+        assertTrue(usuarios.size() >= 2);
     }
 
     @Test
-    void crearUsuario_DebeAsignarRolCorrectamente() {
-        // 1. PREPARACIÓN: Datos de entrada
-        String rolEsperado = "ARRENDADOR";
+    void crearUsuario_SinApellido_LanzaExcepcion() {
+        UsuarioDTO usuarioInvalido = crearUsuarioValido();
+        usuarioInvalido.setApellido(null);
         
-        // 2. EJECUCIÓN: Crear usuario
-        UsuarioDTO usuarioCreado = crearUsuarioDePrueba("Carlos López", "carlos@gmail.com", rolEsperado);
-        
-        // 3. VERIFICACIÓN: Comprobar rol
-        assertEquals(rolEsperado, usuarioCreado.getRol(), 
-                    "El rol del usuario no coincide con el esperado");
-        
-        // Verificar que se creó correctamente
-        UsuarioDTO usuarioObtenido = usuarioService.obtenerUsuarioPorId(usuarioCreado.getId());
-        assertEquals(rolEsperado, usuarioObtenido.getRol());
-    }
-
-    @Test
-    void actualizarUsuario_DebeCambiarEmailCorrectamente() {
-        // 1. PREPARACIÓN: Crear usuario inicial
-        UsuarioDTO usuarioOriginal = crearUsuarioDePrueba("Usuario Prueba", "original@gmail.com", "ARRENDATARIO");
-        String nuevoEmail = "nuevo@gmail.com";
-        
-        // 2. EJECUCIÓN: Actualizar email
-        usuarioOriginal.setCorreo(nuevoEmail);
-        UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(
-            usuarioOriginal.getId(), usuarioOriginal);
-        
-        // 3. VERIFICACIÓN: Comprobar cambio
-        assertEquals(nuevoEmail, usuarioActualizado.getCorreo(),
-                   "El email no se actualizó correctamente");
-        
-        // Verificar persistencia del cambio
-        UsuarioDTO usuarioObtenido = usuarioService.obtenerUsuarioPorId(usuarioOriginal.getId());
-        assertEquals(nuevoEmail, usuarioObtenido.getCorreo());
-    }
-
-    // Método auxiliar mejorado
-    private UsuarioDTO crearUsuarioDePrueba(String nombre, String email, String rol) {
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setNombre(nombre);
-        usuarioDTO.setCorreo(email);
-        usuarioDTO.setRol(rol);
-        return usuarioService.crearUsuario(usuarioDTO);
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            usuarioService.crearUsuario(usuarioInvalido);
+        });
     }
 }

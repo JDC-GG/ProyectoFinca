@@ -41,7 +41,7 @@ public class UsuarioService {
         usuario.setApellido(usuarioDTO.getApellido());
         usuario.setTelefono(usuarioDTO.getTelefono());
         usuario.setCorreo(usuarioDTO.getCorreo());
-        usuario.setContrasena(usuarioDTO.getCorreo());
+        usuario.setContrasena(usuarioDTO.getContrasena());
         usuario.setRol(usuarioDTO.getRol());
 
         usuario = usuarioRepository.save(usuario);
