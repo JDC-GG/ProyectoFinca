@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ArriendaTuFinca.com.javeriana.dtos.UsuarioDTO;
 import ArriendaTuFinca.com.javeriana.services.UsuarioService;
-
+import ArriendaTuFinca.com.javeriana.dtos.LoginRequest; 
 
 @RestController
 @RequestMapping("/usuario")
@@ -52,4 +52,15 @@ public class UsuarioController {
     public ResponseEntity<List<UsuarioDTO>> listarUsuarios() {
         return ResponseEntity.ok(usuarioService.listarTodosLosUsuarios());
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            UsuarioDTO usuario = usuarioService.login(request.getCorreo(), request.getContrasena());
+            return ResponseEntity.ok(usuario);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body("Credenciales inválidas");
+        }
+    }
+
 }
