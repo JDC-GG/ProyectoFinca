@@ -41,10 +41,14 @@ class SolicitudArriendoServiceTest {
         PropiedadDTO propiedadCreada = propiedadService.crearPropiedad(propiedadDTO);
 
         UsuarioDTO usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setNombre("Ana Gómez");
+        usuarioDTO.setNombre("Ana");
+        usuarioDTO.setApellido("Gómez");
+        usuarioDTO.setTelefono("3101234567");
         usuarioDTO.setCorreo("ana@gmail.com");
+        usuarioDTO.setContrasena("12345678");
         usuarioDTO.setRol("ARRENDATARIO");
         UsuarioDTO usuarioCreado = usuarioService.crearUsuario(usuarioDTO);
+
 
         // 2. Crear solicitud
         SolicitudArriendoDTO solicitudDTO = new SolicitudArriendoDTO();

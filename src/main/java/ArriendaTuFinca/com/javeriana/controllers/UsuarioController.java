@@ -1,30 +1,30 @@
 package ArriendaTuFinca.com.javeriana.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import ArriendaTuFinca.com.javeriana.dtos.UsuarioDTO;
 import ArriendaTuFinca.com.javeriana.services.UsuarioService;
-import ArriendaTuFinca.com.javeriana.dtos.LoginRequest; 
+import ArriendaTuFinca.com.javeriana.dtos.LoginRequest;
+import ArriendaTuFinca.com.javeriana.dtos.AuthResponse;
+import ArriendaTuFinca.com.javeriana.security.JwtService;
 
 @RestController
 @RequestMapping("/usuario")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final JwtService jwtService;
 
-    // Inyección por constructor (recomendado por SonarQube)
-    public UsuarioController(UsuarioService usuarioService) {
+    // Inyección de dependencias por constructor
+    public UsuarioController(UsuarioService usuarioService, JwtService jwtService) {
         this.usuarioService = usuarioService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping
@@ -54,13 +54,20 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        try {
-            UsuarioDTO usuario = usuarioService.login(request.getCorreo(), request.getContrasena());
-            return ResponseEntity.ok(usuario);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(401).body("Credenciales inválidas");
-        }
+public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    try {
+        UsuarioDTO usuario = usuarioService.login(request.getCorreo(), request.getContrasena());
+        String token = jwtService.generateToken(request.getCorreo());
+
+        // Devolver tanto el usuario como el token
+        Map<String, Object> response = new HashMap<>();
+        response.put("usuario", usuario);
+        response.put("token", token);
+
+        return ResponseEntity.ok(response);
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(401).body("Credenciales inválidas");
     }
+}
 
 }

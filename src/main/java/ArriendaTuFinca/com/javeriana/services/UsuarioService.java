@@ -5,6 +5,7 @@ import ArriendaTuFinca.com.javeriana.entities.Usuario;
 import ArriendaTuFinca.com.javeriana.repositories.UsuarioRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,13 +73,17 @@ public class UsuarioService {
 
     // Nuevo método para login
     public UsuarioDTO login(String correo, String contrasena) {
-        Usuario usuario = usuarioRepository.findByCorreo(correo)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
+        Usuario usuario = usuarioRepository.findByCorreo(correo);
+    
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+    
         if (!usuario.getContrasena().equals(contrasena)) {
             throw new RuntimeException("Contraseña incorrecta");
         }
-
+    
         return convertirAUsuarioDTO(usuario);
     }
+    
 }
