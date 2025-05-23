@@ -6,8 +6,7 @@ public class PropiedadDTO {
     private String ubicacion;
     private double precio;
     private Long id_usuario;
-    
-    // Getters y Setters
+
     public Long getId() {
         return id;
     }
@@ -40,14 +39,11 @@ public class PropiedadDTO {
         this.precio = precio;
     }
 
-    
-
     public Long getId_usuario() {
-    return id_usuario;
-}
+        return id_usuario;
+    }
 
     public void setId_usuario(Long id_usuario) {
-    this.id_usuario = id_usuario;
-}
-
+        this.id_usuario = id_usuario;
+    }
 }

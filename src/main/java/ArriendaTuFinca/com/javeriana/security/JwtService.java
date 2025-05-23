@@ -11,20 +11,21 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    // Clave secreta para firmar el token (en una app real debería estar en el application.properties o como variable de entorno)
-    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final long EXPIRATION_TIME_MS = 3600000; // 1 hora
+    // Clave fija y consistente entre generación y validación
+    private static final String SECRET = "MiClaveSuperSecretaYSegura123456789012";
+    private static final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private static final long EXPIRATION_TIME_MS = 3600000;
 
     public String generateToken(String correo) {
         return Jwts.builder()
-                .setSubject(correo)
+                .setSubject(correo.trim().toLowerCase())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MS))
                 .signWith(SECRET_KEY)
                 .compact();
     }
 
-    public String validateToken(String token) {
+    public String extractCorreo(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
                 .build()
@@ -32,15 +33,8 @@ public class JwtService {
                 .getBody()
                 .getSubject();
     }
-    
-    public String extractCorreo(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject(); // ← aquí está el correo que guardaste con setSubject()
-    }
-    
 
+    public String validateToken(String token) {
+        return extractCorreo(token);
+    }
 }

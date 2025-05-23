@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ArriendaTuFinca.com.javeriana.entities.Usuario;
 import ArriendaTuFinca.com.javeriana.repositories.UsuarioRepository;
-import io.jsonwebtoken.security.SecurityException;
 import io.jsonwebtoken.ExpiredJwtException;
-
+import io.jsonwebtoken.security.SecurityException;
+import java.util.List;
 
 import java.io.IOException;
 
@@ -45,20 +45,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String correo;
 
         try {
-            correo = jwtService.extractCorreo(jwt);
-        } catch (ExpiredJwtException | SecurityException e)  {
+            correo = jwtService.extractCorreo(jwt).trim().toLowerCase();
+        } catch (ExpiredJwtException | SecurityException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-        
 
         if (correo != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Usuario usuario = usuarioRepository.findByCorreo(correo);
             if (usuario != null) {
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(usuario, null, null);
+        new UsernamePasswordAuthenticationToken(correo, null, List.of());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                System.out.println("Usuario no encontrado en la BD: " + correo);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
         }
 
