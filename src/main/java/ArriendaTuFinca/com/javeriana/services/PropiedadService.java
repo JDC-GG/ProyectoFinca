@@ -30,7 +30,7 @@ public class PropiedadService {
         propiedad.setNombre(propiedadDTO.getNombre());
         propiedad.setUbicacion(propiedadDTO.getUbicacion());
         propiedad.setPrecio(propiedadDTO.getPrecio());
-
+        propiedad.setId_usuario(propiedadDTO.getId_usuario()); 
         propiedad = propiedadRepository.save(propiedad);
         return convertirAPropiedadDTO(propiedad);
     }
@@ -72,6 +72,7 @@ public class PropiedadService {
         propiedadDTO.setNombre(propiedad.getNombre());
         propiedadDTO.setUbicacion(propiedad.getUbicacion());
         propiedadDTO.setPrecio(propiedad.getPrecio());
+        propiedadDTO.setId_usuario(propiedad.getId_usuario());
         return propiedadDTO;
     }
 }
