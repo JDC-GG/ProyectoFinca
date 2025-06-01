@@ -1,49 +1,70 @@
 package ArriendaTuFinca.com.javeriana.dtos;
 
+import ArriendaTuFinca.com.javeriana.entities.Propiedad.StatusPropiedad;
+import ArriendaTuFinca.com.javeriana.entities.Propiedad.TipoIngreso;
+
+/**
+ *  DTO sin anotaciones JPA: puro transporte de datos.
+ */
 public class PropiedadDTO {
-    private Long id;
+
+    private Long   id;
     private String nombre;
-    private String ubicacion;
-    private double precio;
-    private Long id_usuario;
+    private String departamento;
+    private String municipio;
+    private String descripcion;
+    private int    habitaciones;
+    private int    banos;
+    private boolean mascotas;
+    private boolean piscina;
+    private boolean asador;
+    private double valorNoche;
+    private TipoIngreso    tipoIngreso;
+    private StatusPropiedad status;
 
-    public Long getId() {
-        return id;
-    }
+    private Long idUsuario;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // GETTERS & SETTERS ──────────────── 
 
-    public String getNombre() {
-        return nombre;
-    }
+    public Long getId()                       { return id; }
+    public void setId(Long id)                { this.id = id; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getNombre()                 { return nombre; }
+    public void setNombre(String nombre)      { this.nombre = nombre; }
 
-    public String getUbicacion() {
-        return ubicacion;
-    }
+    public String getDepartamento()           { return departamento; }
+    public void setDepartamento(String dep)   { this.departamento = dep; }
 
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
-    }
+    public String getMunicipio()              { return municipio; }
+    public void setMunicipio(String mun)      { this.municipio = mun; }
 
-    public double getPrecio() {
-        return precio;
-    }
+    public String getDescripcion()            { return descripcion; }
+    public void setDescripcion(String d)      { this.descripcion = d; }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
+    public int  getHabitaciones()             { return habitaciones; }
+    public void setHabitaciones(int h)        { this.habitaciones = h; }
 
-    public Long getId_usuario() {
-        return id_usuario;
-    }
+    public int  getBanos()                    { return banos; }
+    public void setBanos(int b)               { this.banos = b; }
 
-    public void setId_usuario(Long id_usuario) {
-        this.id_usuario = id_usuario;
-    }
+    public boolean isMascotas()               { return mascotas; }
+    public void    setMascotas(boolean m)     { this.mascotas = m; }
+
+    public boolean isPiscina()                { return piscina; }
+    public void    setPiscina(boolean p)      { this.piscina = p; }
+
+    public boolean isAsador()                 { return asador; }
+    public void    setAsador(boolean a)       { this.asador = a; }
+
+    public double  getValorNoche()            { return valorNoche; }
+    public void    setValorNoche(double v)    { this.valorNoche = v; }
+
+    public TipoIngreso getTipoIngreso()       { return tipoIngreso; }
+    public void setTipoIngreso(TipoIngreso t) { this.tipoIngreso = t; }
+
+    public StatusPropiedad getStatus()               { return status; }
+    public void           setStatus(StatusPropiedad s){ this.status = s; }
+
+    public Long getIdUsuario()                { return idUsuario; }
+    public void setIdUsuario(Long idUsuario)  { this.idUsuario = idUsuario; }
 }

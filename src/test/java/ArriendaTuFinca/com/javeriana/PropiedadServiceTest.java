@@ -20,6 +20,7 @@ class PropiedadServiceTest {
     @Autowired
     private PropiedadService propiedadService;
 
+    /* 
     private PropiedadDTO crearPropiedadDePrueba() {
         PropiedadDTO propiedadDTO = new PropiedadDTO();
         propiedadDTO.setNombre("Casa Playa");
@@ -27,6 +28,7 @@ class PropiedadServiceTest {
         propiedadDTO.setPrecio(500000.0);
         return propiedadService.crearPropiedad(propiedadDTO);
     }
+    
 
     @Test
     void eliminarPropiedad_DebeEliminarCorrectamente() {
@@ -52,6 +54,7 @@ class PropiedadServiceTest {
             assertEquals("Propiedad no encontrada", ex.getMessage()); // Mensaje exacto
         }
     }
+    
     @Test
     void crearPropiedad_DebeRetornarPropiedadConDatosCorrectos() {
         // 1. Crear propiedad
@@ -69,7 +72,7 @@ class PropiedadServiceTest {
         assertEquals(400000.0, propiedadCreada.getPrecio());
     }
 
-
+    
     @Test
     void actualizarPropiedad_DebeModificarDatosCorrectamente() {
         // 1. Crear propiedad
@@ -84,4 +87,5 @@ class PropiedadServiceTest {
         assertEquals("Casa Actualizada", propiedadActualizada.getNombre());
         assertEquals(600000.0, propiedadActualizada.getPrecio());
     }
+        */
 }

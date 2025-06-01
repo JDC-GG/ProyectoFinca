@@ -1,0 +1,7 @@
+ id  |   nombre    | valor_noche | departamento | id_usuario | municipio |            descripcion            | habitaciones | banos | mascotas | piscina | asador |    tipo_ingreso     | status 
+-----+-------------+-------------+--------------+------------+-----------+-----------------------------------+--------------+-------+----------+---------+--------+---------------------+--------
+ 190 | Casa 1      |          14 | Bogota       |        188 |           |                                   |              |       | f        | f       | f      |                     | 
+ 191 | FINCA VALLE |      350000 | VALLE        |        190 | Valle     | Finca amañadora de 8 habitaciones |            4 |     2 | t        | t       | t      | CARRETERA_PRINCIPAL | ACTIVA
+ 192 | FINCA 2     |       50000 | AAA          |        190 | AAAA      | DESCRIPCION DE LA FINCA           |            1 |     1 | f        | f       | f      | EN_MUNICIPIO        | ACTIVA
+(3 rows)
+

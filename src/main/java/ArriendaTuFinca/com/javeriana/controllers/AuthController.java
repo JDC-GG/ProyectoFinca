@@ -2,6 +2,7 @@ package ArriendaTuFinca.com.javeriana.controllers;
 
 import ArriendaTuFinca.com.javeriana.dtos.LoginRequest;
 import ArriendaTuFinca.com.javeriana.dtos.AuthResponse;
+import ArriendaTuFinca.com.javeriana.dtos.UsuarioDTO;
 import ArriendaTuFinca.com.javeriana.entities.Usuario;
 import ArriendaTuFinca.com.javeriana.repositories.UsuarioRepository;
 import ArriendaTuFinca.com.javeriana.security.JwtService;
@@ -18,7 +19,9 @@ public class AuthController {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UsuarioRepository usuarioRepository, JwtService jwtService, PasswordEncoder passwordEncoder) {
+    public AuthController(UsuarioRepository usuarioRepository,
+                          JwtService jwtService,
+                          PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
@@ -33,6 +36,18 @@ public class AuthController {
         }
 
         String token = jwtService.generateToken(usuario.getCorreo());
-        return ResponseEntity.ok(new AuthResponse(token));
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setId(usuario.getId());
+        usuarioDTO.setNombre(usuario.getNombre());
+        usuarioDTO.setApellido(usuario.getApellido());
+        usuarioDTO.setTelefono(usuario.getTelefono());
+        usuarioDTO.setCorreo(usuario.getCorreo());
+        
+        usuarioDTO.setContrasena(null);
+        usuarioDTO.setRol(usuario.getRol());
+
+        AuthResponse response = new AuthResponse(token, usuarioDTO);
+        return ResponseEntity.ok(response);
     }
 }

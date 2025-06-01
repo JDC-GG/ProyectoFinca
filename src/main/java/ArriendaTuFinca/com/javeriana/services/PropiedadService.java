@@ -18,54 +18,44 @@ import org.springframework.stereotype.Service;
 @Service
 public class PropiedadService {
 
-    @Autowired
-    private PropiedadRepository propiedadRepository;
+    @Autowired private PropiedadRepository propiedadRepository;
+    @Autowired private UsuarioRepository   usuarioRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    /* ───────────────────── CRUD ───────────────────── */
 
-    public PropiedadDTO crearPropiedad(PropiedadDTO propiedadDTO) {
-        Optional<Propiedad> propiedadExistente = propiedadRepository.findByNombreAndUbicacion(
-            propiedadDTO.getNombre(), propiedadDTO.getUbicacion());
+    public PropiedadDTO crearPropiedad(PropiedadDTO dto) {
 
-        if (propiedadExistente.isPresent()) {
+        Optional<Propiedad> existente =
+            propiedadRepository.findByNombreAndDepartamentoAndMunicipio(
+                    dto.getNombre(), dto.getDepartamento(), dto.getMunicipio());
+
+        if (existente.isPresent())
             throw new RuntimeException("La propiedad ya existe");
-        }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String correo = authentication.getName();
-        Usuario usuario = usuarioRepository.findByCorreo(correo);
-
-        if (usuario == null) {
+        // ――― Propietario autenticado ―――
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = usuarioRepository.findByCorreo(auth.getName());
+        if (usuario == null)
             throw new RuntimeException("Usuario no encontrado");
-        }
 
-        Propiedad propiedad = new Propiedad();
-        propiedad.setNombre(propiedadDTO.getNombre());
-        propiedad.setUbicacion(propiedadDTO.getUbicacion());
-        propiedad.setPrecio(propiedadDTO.getPrecio());
-        propiedad.setUsuario(usuario);
+        Propiedad p = new Propiedad();
+        copiarDtoAEntidad(dto, p);
+        p.setUsuario(usuario);
 
-        propiedad = propiedadRepository.save(propiedad);
-        return convertirAPropiedadDTO(propiedad);
+        return convertir(propiedadRepository.save(p));
     }
 
     public PropiedadDTO obtenerPropiedadPorId(Long id) {
-        Propiedad propiedad = propiedadRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Propiedad no encontrada"));
-        return convertirAPropiedadDTO(propiedad);
+        Propiedad p = propiedadRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Propiedad no encontrada"));
+        return convertir(p);
     }
 
-    public PropiedadDTO actualizarPropiedad(Long id, PropiedadDTO propiedadDTO) {
-        Propiedad propiedad = propiedadRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Propiedad no encontrada"));
-
-        propiedad.setNombre(propiedadDTO.getNombre());
-        propiedad.setUbicacion(propiedadDTO.getUbicacion());
-        propiedad.setPrecio(propiedadDTO.getPrecio());
-
-        propiedad = propiedadRepository.save(propiedad);
-        return convertirAPropiedadDTO(propiedad);
+    public PropiedadDTO actualizarPropiedad(Long id, PropiedadDTO dto) {
+        Propiedad p = propiedadRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Propiedad no encontrada"));
+        copiarDtoAEntidad(dto, p);
+        return convertir(propiedadRepository.save(p));
     }
 
     public void eliminarPropiedad(Long id) {
@@ -73,20 +63,45 @@ public class PropiedadService {
     }
 
     public List<PropiedadDTO> listarTodasLasPropiedades() {
-        return propiedadRepository.findAll().stream()
-            .map(this::convertirAPropiedadDTO)
-            .collect(Collectors.toList());
+        return propiedadRepository.findAll()
+                                  .stream()
+                                  .map(this::convertir)
+                                  .collect(Collectors.toList());
     }
 
-    private PropiedadDTO convertirAPropiedadDTO(Propiedad propiedad) {
-        PropiedadDTO propiedadDTO = new PropiedadDTO();
-        propiedadDTO.setId(propiedad.getId());
-        propiedadDTO.setNombre(propiedad.getNombre());
-        propiedadDTO.setUbicacion(propiedad.getUbicacion());
-        propiedadDTO.setPrecio(propiedad.getPrecio());
-        propiedadDTO.setId_usuario(
-            propiedad.getUsuario() != null ? propiedad.getUsuario().getId() : null
-        );
-        return propiedadDTO;
+    /* ───────────── Helpers de mapeo ───────────── */
+
+    private PropiedadDTO convertir(Propiedad p) {
+        PropiedadDTO dto = new PropiedadDTO();
+        dto.setId(p.getId());
+        dto.setNombre(p.getNombre());
+        dto.setDepartamento(p.getDepartamento());
+        dto.setMunicipio(p.getMunicipio());
+        dto.setDescripcion(p.getDescripcion());
+        dto.setHabitaciones(p.getHabitaciones());
+        dto.setBanos(p.getBanos());
+        dto.setMascotas(p.isMascotas());
+        dto.setPiscina(p.isPiscina());
+        dto.setAsador(p.isAsador());
+        dto.setValorNoche(p.getValorNoche());
+        dto.setTipoIngreso(p.getTipoIngreso());
+        dto.setStatus(p.getStatus());
+        dto.setIdUsuario(p.getUsuario() != null ? p.getUsuario().getId() : null);
+        return dto;
+    }
+
+    private void copiarDtoAEntidad(PropiedadDTO dto, Propiedad p) {
+        p.setNombre(dto.getNombre());
+        p.setDepartamento(dto.getDepartamento());
+        p.setMunicipio(dto.getMunicipio());
+        p.setDescripcion(dto.getDescripcion());
+        p.setHabitaciones(dto.getHabitaciones());
+        p.setBanos(dto.getBanos());
+        p.setMascotas(dto.isMascotas());
+        p.setPiscina(dto.isPiscina());
+        p.setAsador(dto.isAsador());
+        p.setValorNoche(dto.getValorNoche());
+        p.setTipoIngreso(dto.getTipoIngreso());
+        p.setStatus(dto.getStatus());
     }
 }
