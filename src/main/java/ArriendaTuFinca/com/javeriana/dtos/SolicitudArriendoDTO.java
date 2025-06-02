@@ -6,8 +6,8 @@ public class SolicitudArriendoDTO {
     private Long id;
     private Long propiedadId;
     private Long usuarioId;
-    private Date fechaSolicitud;
-    private String estado;
+    private Date fechaSolicitud = null; 
+    private String estado = null; 
 
     // Getters y Setters
     public Long getId() {

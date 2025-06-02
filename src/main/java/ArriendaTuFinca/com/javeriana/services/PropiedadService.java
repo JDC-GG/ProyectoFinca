@@ -89,4 +89,12 @@ public class PropiedadService {
         );
         return propiedadDTO;
     }
+
+    public List<Long> obtenerIdsPropiedadesPorDueno(Long idDueno) {
+    return propiedadRepository.findByUsuarioId(idDueno)
+        .stream()
+        .map(Propiedad::getId)
+        .collect(Collectors.toList());
+}
+
 }

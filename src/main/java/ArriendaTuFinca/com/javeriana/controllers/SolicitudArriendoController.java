@@ -48,4 +48,15 @@ public class SolicitudArriendoController {
     public ResponseEntity<List<SolicitudArriendoDTO>> listarSolicitudes() {
         return ResponseEntity.ok(solicitudArriendoService.listarTodasLasSolicitudes());
     }
+
+    @PutMapping("/{id}/aceptar")
+    public ResponseEntity<SolicitudArriendoDTO> aceptarSolicitud(@PathVariable Long id) {
+    return ResponseEntity.ok(solicitudArriendoService.aceptarSolicitud(id));
+    }
+
+    @PutMapping("/{id}/rechazar")
+    public ResponseEntity<SolicitudArriendoDTO> rechazarSolicitud(@PathVariable Long id) {
+    return ResponseEntity.ok(solicitudArriendoService.rechazarSolicitud(id));
+    }   
+
 }
