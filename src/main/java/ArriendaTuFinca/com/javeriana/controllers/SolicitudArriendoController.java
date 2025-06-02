@@ -2,50 +2,38 @@ package ArriendaTuFinca.com.javeriana.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import ArriendaTuFinca.com.javeriana.dtos.SolicitudArriendoDTO;
 import ArriendaTuFinca.com.javeriana.services.SolicitudArriendoService;
 
 @RestController
-@RequestMapping("/solicitud")
+@RequestMapping("/solicitud-arriendo")
 public class SolicitudArriendoController {
 
-    @Autowired
-    private SolicitudArriendoService solicitudArriendoService;
+    private final SolicitudArriendoService solicitudService;
 
+    public SolicitudArriendoController(SolicitudArriendoService solicitudService) {
+        this.solicitudService = solicitudService;
+    }
+
+    
     @PostMapping
-    public ResponseEntity<SolicitudArriendoDTO> crearSolicitud(@RequestBody SolicitudArriendoDTO solicitudArriendoDTO) {
-        return ResponseEntity.ok(solicitudArriendoService.crearSolicitud(solicitudArriendoDTO));
+    public ResponseEntity<SolicitudArriendoDTO> crearSolicitud(@RequestBody SolicitudArriendoDTO dto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String correoUsuario = auth.getName();
+        SolicitudArriendoDTO respuesta = solicitudService.crearSolicitud(dto, correoUsuario);
+        return ResponseEntity.ok(respuesta);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<SolicitudArriendoDTO> obtenerSolicitud(@PathVariable Long id) {
-        return ResponseEntity.ok(solicitudArriendoService.obtenerSolicitudPorId(id));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<SolicitudArriendoDTO> actualizarSolicitud(@PathVariable Long id, @RequestBody SolicitudArriendoDTO solicitudArriendoDTO) {
-        return ResponseEntity.ok(solicitudArriendoService.actualizarSolicitud(id, solicitudArriendoDTO));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarSolicitud(@PathVariable Long id) {
-        solicitudArriendoService.eliminarSolicitud(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<SolicitudArriendoDTO>> listarSolicitudes() {
-        return ResponseEntity.ok(solicitudArriendoService.listarTodasLasSolicitudes());
+    @GetMapping("/mis-solicitudes")
+    public ResponseEntity<List<SolicitudArriendoDTO>> misSolicitudes() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String correoUsuario = auth.getName();
+        List<SolicitudArriendoDTO> lista = solicitudService.listarSolicitudesPorUsuario(correoUsuario);
+        return ResponseEntity.ok(lista);
     }
 }

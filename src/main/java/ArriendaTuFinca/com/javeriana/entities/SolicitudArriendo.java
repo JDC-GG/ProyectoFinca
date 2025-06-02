@@ -1,34 +1,55 @@
 package ArriendaTuFinca.com.javeriana.entities;
 
-import java.sql.Date;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "solicitud_arriendo")
 public class SolicitudArriendo {
+
+    public enum EstadoSolicitud {
+        PENDIENTE_PAGO,       // El huésped ya llenó el formulario, falta pagar
+        PENDIENTE_CALIFICACION, // El huésped ya pagó, falta calificar
+        COMPLETADA,           // Ya se pagó y se calificó
+        RECHAZADA             // El anfitrión rechazó la solicitud
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long propiedadId;
+    @Column(name = "fecha_solicitud", nullable = false)
+    private LocalDateTime fechaSolicitud;
 
-    @Column(nullable = false)
-    private Long usuarioId;
+    @Column(name = "fecha_llegada", nullable = false)
+    private LocalDate fechaLlegada;
 
-    @Column(nullable = false)
-    private Date fechaSolicitud;
+    @Column(name = "fecha_salida", nullable = false)
+    private LocalDate fechaSalida;
 
-    @Column(nullable = false)
-    private String estado;
+    @Column(name = "cantidad_personas", nullable = false)
+    private int cantidadPersonas;
 
-    // Getters y Setters
+    @Column(name = "valor_total", nullable = false)
+    private double valorTotal;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false)
+    private EstadoSolicitud estado;
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "id_propiedad", nullable = false)
+    private Propiedad propiedad;
+
+    public SolicitudArriendo() {}
+
+    // GETTERS & SETTERS
+
     public Long getId() {
         return id;
     }
@@ -37,35 +58,67 @@ public class SolicitudArriendo {
         this.id = id;
     }
 
-    public Long getPropiedadId() {
-        return propiedadId;
-    }
-
-    public void setPropiedadId(Long propiedadId) {
-        this.propiedadId = propiedadId;
-    }
-
-    public Long getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
-    public Date getFechaSolicitud() {
+    public LocalDateTime getFechaSolicitud() {
         return fechaSolicitud;
     }
 
-    public void setFechaSolicitud(Date fechaSolicitud) {
+    public void setFechaSolicitud(LocalDateTime fechaSolicitud) {
         this.fechaSolicitud = fechaSolicitud;
     }
 
-    public String getEstado() {
+    public LocalDate getFechaLlegada() {
+        return fechaLlegada;
+    }
+
+    public void setFechaLlegada(LocalDate fechaLlegada) {
+        this.fechaLlegada = fechaLlegada;
+    }
+
+    public LocalDate getFechaSalida() {
+        return fechaSalida;
+    }
+
+    public void setFechaSalida(LocalDate fechaSalida) {
+        this.fechaSalida = fechaSalida;
+    }
+
+    public int getCantidadPersonas() {
+        return cantidadPersonas;
+    }
+
+    public void setCantidadPersonas(int cantidadPersonas) {
+        this.cantidadPersonas = cantidadPersonas;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public EstadoSolicitud getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoSolicitud estado) {
         this.estado = estado;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Propiedad getPropiedad() {
+        return propiedad;
+    }
+
+    public void setPropiedad(Propiedad propiedad) {
+        this.propiedad = propiedad;
     }
 }
