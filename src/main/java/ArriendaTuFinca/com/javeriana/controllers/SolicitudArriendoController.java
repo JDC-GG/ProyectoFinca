@@ -59,4 +59,15 @@ public class SolicitudArriendoController {
     return ResponseEntity.ok(solicitudArriendoService.rechazarSolicitud(id));
     }   
 
+
+    @GetMapping("/dueno/{idDueno}")
+    public ResponseEntity<List<SolicitudArriendoDTO>> listarSolicitudesPorDueno(@PathVariable Long idDueno) {
+    return ResponseEntity.ok(solicitudArriendoService.listarSolicitudesRecibidas(idDueno));
+    }
+
+    @GetMapping("/mis-solicitudes")
+    public ResponseEntity<List<SolicitudArriendoDTO>> listarSolicitudesDelUsuarioAutenticado() {
+    return ResponseEntity.ok(solicitudArriendoService.listarSolicitudesDelUsuarioActual());
+}
+
 }

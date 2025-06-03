@@ -2,15 +2,20 @@ package ArriendaTuFinca.com.javeriana.services;
 
 import ArriendaTuFinca.com.javeriana.dtos.SolicitudArriendoDTO;
 import ArriendaTuFinca.com.javeriana.entities.SolicitudArriendo;
+import ArriendaTuFinca.com.javeriana.entities.Usuario;
 import ArriendaTuFinca.com.javeriana.repositories.SolicitudArriendoRepository;
+import ArriendaTuFinca.com.javeriana.repositories.UsuarioRepository;
+import ArriendaTuFinca.com.javeriana.security.JwtService;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.sql.Date;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SolicitudArriendoService {
@@ -18,22 +23,25 @@ public class SolicitudArriendoService {
     @Autowired
     private SolicitudArriendoRepository solicitudArriendoRepository;
 
-  public SolicitudArriendoDTO crearSolicitud(SolicitudArriendoDTO solicitudArriendoDTO) {
-    SolicitudArriendo solicitudArriendo = new SolicitudArriendo();
-    solicitudArriendo.setPropiedadId(solicitudArriendoDTO.getPropiedadId());
-    solicitudArriendo.setUsuarioId(solicitudArriendoDTO.getUsuarioId());
+    @Autowired
+    private PropiedadService propiedadService;
 
-    // 🔥 Agrega la fecha de hoy automáticamente
-    solicitudArriendo.setFechaSolicitud(Date.valueOf(LocalDate.now()));
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    // 🔥 Estado inicial "PENDIENTE"
-    solicitudArriendo.setEstado("PENDIENTE");
+    @Autowired
+    private JwtService jwtService;
 
-    solicitudArriendo = solicitudArriendoRepository.save(solicitudArriendo);
-    return convertirASolicitudArriendoDTO(solicitudArriendo);
-}
+    public SolicitudArriendoDTO crearSolicitud(SolicitudArriendoDTO solicitudArriendoDTO) {
+        SolicitudArriendo solicitudArriendo = new SolicitudArriendo();
+        solicitudArriendo.setPropiedadId(solicitudArriendoDTO.getPropiedadId());
+        solicitudArriendo.setUsuarioId(solicitudArriendoDTO.getUsuarioId());
+        solicitudArriendo.setFechaSolicitud(Date.valueOf(LocalDate.now()));
+        solicitudArriendo.setEstado("PENDIENTE");
 
-
+        solicitudArriendo = solicitudArriendoRepository.save(solicitudArriendo);
+        return convertirASolicitudArriendoDTO(solicitudArriendo);
+    }
 
     public SolicitudArriendoDTO obtenerSolicitudPorId(Long id) {
         SolicitudArriendo solicitudArriendo = solicitudArriendoRepository.findById(id)
@@ -44,10 +52,12 @@ public class SolicitudArriendoService {
     public SolicitudArriendoDTO actualizarSolicitud(Long id, SolicitudArriendoDTO solicitudArriendoDTO) {
         SolicitudArriendo solicitudArriendo = solicitudArriendoRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
         solicitudArriendo.setPropiedadId(solicitudArriendoDTO.getPropiedadId());
         solicitudArriendo.setUsuarioId(solicitudArriendoDTO.getUsuarioId());
         solicitudArriendo.setFechaSolicitud(solicitudArriendoDTO.getFechaSolicitud());
         solicitudArriendo.setEstado(solicitudArriendoDTO.getEstado());
+
         solicitudArriendo = solicitudArriendoRepository.save(solicitudArriendo);
         return convertirASolicitudArriendoDTO(solicitudArriendo);
     }
@@ -62,52 +72,68 @@ public class SolicitudArriendoService {
             .collect(Collectors.toList());
     }
 
-    private SolicitudArriendoDTO convertirASolicitudArriendoDTO(SolicitudArriendo solicitudArriendo) {
-        SolicitudArriendoDTO solicitudArriendoDTO = new SolicitudArriendoDTO();
-        solicitudArriendoDTO.setId(solicitudArriendo.getId());
-        solicitudArriendoDTO.setPropiedadId(solicitudArriendo.getPropiedadId());
-        solicitudArriendoDTO.setUsuarioId(solicitudArriendo.getUsuarioId());
-        solicitudArriendoDTO.setFechaSolicitud(solicitudArriendo.getFechaSolicitud());
-        solicitudArriendoDTO.setEstado(solicitudArriendo.getEstado());
-        return solicitudArriendoDTO;
+    public SolicitudArriendoDTO aceptarSolicitud(Long id) {
+        SolicitudArriendo solicitud = solicitudArriendoRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+        solicitud.setEstado("PENDIENTE_PAGO");
+        solicitud = solicitudArriendoRepository.save(solicitud);
+        return convertirASolicitudArriendoDTO(solicitud);
     }
-    
 
-    @Autowired
-private PropiedadService propiedadService; // Asegúrate que tienes esto para acceder a las propiedades
+    public SolicitudArriendoDTO rechazarSolicitud(Long id) {
+        SolicitudArriendo solicitud = solicitudArriendoRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
-public List<SolicitudArriendoDTO> listarSolicitudesRecibidas(Long idDueno) {
-    // 1. Obtener las propiedades del dueño
-    List<Long> idsPropiedades = propiedadService.obtenerIdsPropiedadesPorDueno(idDueno);
+        solicitud.setEstado("RECHAZADA");
+        solicitud = solicitudArriendoRepository.save(solicitud);
+        return convertirASolicitudArriendoDTO(solicitud);
+    }
 
-    // 2. Buscar las solicitudes asociadas a esas propiedades
-    List<SolicitudArriendo> solicitudes = solicitudArriendoRepository.findByPropiedadIdIn(idsPropiedades);
+    public List<SolicitudArriendoDTO> listarSolicitudesRecibidas(Long idDueno) {
+        System.out.println("🟢 ID del dueño recibido: " + idDueno);
 
-    // 3. Convertir a DTOs
-    return solicitudes.stream()
-        .map(this::convertirASolicitudArriendoDTO)
-        .collect(Collectors.toList());
-}
+        List<Long> idsPropiedades = propiedadService.obtenerIdsPropiedadesPorDueno(idDueno);
+        System.out.println("🟦 IDs de propiedades del dueño: " + idsPropiedades);
 
-public SolicitudArriendoDTO aceptarSolicitud(Long id) {
-    SolicitudArriendo solicitud = solicitudArriendoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        if (idsPropiedades == null || idsPropiedades.isEmpty()) {
+            System.out.println("⚠️ El dueño no tiene propiedades registradas.");
+            return List.of();
+        }
 
-    solicitud.setEstado("ACEPTADA");
-    solicitud = solicitudArriendoRepository.save(solicitud);
+        List<SolicitudArriendo> solicitudes = solicitudArriendoRepository.findByPropiedadIdIn(idsPropiedades);
+        System.out.println("✅ Cantidad de solicitudes encontradas: " + solicitudes.size());
 
-    return convertirASolicitudArriendoDTO(solicitud);
-}
+        return solicitudes.stream()
+            .map(this::convertirASolicitudArriendoDTO)
+            .collect(Collectors.toList());
+    }
 
-public SolicitudArriendoDTO rechazarSolicitud(Long id) {
-    SolicitudArriendo solicitud = solicitudArriendoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+    public List<SolicitudArriendoDTO> listarSolicitudesDelUsuarioActual() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String correo = auth.getName().trim().toLowerCase();
 
-    solicitud.setEstado("RECHAZADA");
-    solicitud = solicitudArriendoRepository.save(solicitud);
+        System.out.println("🟡 Usuario autenticado (correo): " + correo);
 
-    return convertirASolicitudArriendoDTO(solicitud);
-}
+        Usuario usuario = usuarioRepository.findByCorreo(correo);
+        if (usuario == null) {
+            System.out.println("🔴 No se encontró el usuario con correo: " + correo);
+            throw new RuntimeException("Usuario no autenticado");
+        }
 
+        List<SolicitudArriendo> solicitudes = solicitudArriendoRepository.findByUsuarioId(usuario.getId());
+        return solicitudes.stream()
+            .map(this::convertirASolicitudArriendoDTO)
+            .collect(Collectors.toList());
+    }
 
+    private SolicitudArriendoDTO convertirASolicitudArriendoDTO(SolicitudArriendo solicitudArriendo) {
+        SolicitudArriendoDTO dto = new SolicitudArriendoDTO();
+        dto.setId(solicitudArriendo.getId());
+        dto.setPropiedadId(solicitudArriendo.getPropiedadId());
+        dto.setUsuarioId(solicitudArriendo.getUsuarioId());
+        dto.setFechaSolicitud(solicitudArriendo.getFechaSolicitud());
+        dto.setEstado(solicitudArriendo.getEstado());
+        return dto;
+    }
 }
