@@ -1,3 +1,5 @@
+// src/main/java/ArriendaTuFinca/com/javeriana/dtos/SolicitudArriendoDTO.java
+
 package ArriendaTuFinca.com.javeriana.dtos;
 
 import java.time.LocalDate;
@@ -16,8 +18,9 @@ public class SolicitudArriendoDTO {
     private double valorTotal;
     private String estado;
     private Long usuarioId;
+    private String nombreUsuario;
 
-    // GETTERS y SETTERS
+    // ───────────── GETTERS & SETTERS ─────────────
 
     public Long getId() {
         return id;
@@ -97,5 +100,12 @@ public class SolicitudArriendoDTO {
 
     public void setUsuarioId(Long usuarioId) {
         this.usuarioId = usuarioId;
+    }
+
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 }

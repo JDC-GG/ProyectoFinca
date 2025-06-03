@@ -9,8 +9,10 @@ import java.time.LocalDateTime;
 public class SolicitudArriendo {
 
     public enum EstadoSolicitud {
+        POR_ACEPTAR,
         PENDIENTE_PAGO,       // El huésped ya llenó el formulario, falta pagar
         PENDIENTE_CALIFICACION, // El huésped ya pagó, falta calificar
+        ACEPTADA,
         COMPLETADA,           // Ya se pagó y se calificó
         RECHAZADA             // El anfitrión rechazó la solicitud
     }
