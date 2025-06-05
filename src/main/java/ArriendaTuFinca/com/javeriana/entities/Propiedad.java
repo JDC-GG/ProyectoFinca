@@ -32,6 +32,7 @@ public class Propiedad {
     private boolean mascotas;
     private boolean piscina;
     private boolean asador;
+    @Column(name = "valor_noche")
     private double valorNoche;      
     
     @Enumerated(EnumType.STRING)
